@@ -1,29 +1,21 @@
 resource "aws_sns_topic" "this" {
-    application_failure_feedback_role_arn = ""
-    application_success_feedback_role_arn = ""
-    application_success_feedback_sample_rate = 0
-    archive_policy = ""
-    content_based_deduplication = true
-    delivery_policy = ""
-    display_name = ""
-    fifo_topic = true
-    firehose_failure_feedback_role_arn = ""
-    firehose_success_feedback_role_arn = ""
-    firehose_success_feedback_sample_rate = 0
-    http_failure_feedback_role_arn = ""
-    http_success_feedback_role_arn = ""
-    http_success_feedback_sample_rate = 0
-    kms_master_key_id = ""
-    lambda_failure_feedback_role_arn = ""
-    lambda_success_feedback_role_arn = ""
-    lambda_success_feedback_sample_rate = 0
-    name = ""
-    name_prefix = ""
-    policy = ""
-    signature_version = 0
-    sqs_failure_feedback_role_arn = ""
-    sqs_success_feedback_role_arn = ""
-    sqs_success_feedback_sample_rate = 0
-    tags = {}
-    tracing_config = ""
+  count                                    = length(var.sns_topic)
+  archive_policy                           = lookup(var.sns_topic[count.index], "archive_policy")
+  content_based_deduplication              = lookup(var.sns_topic[count.index], "content_based_deduplication")
+  delivery_policy                          = lookup(var.sns_topic[count.index], "delivery_policy")
+  display_name                             = lookup(var.sns_topic[count.index], "display_name")
+  fifo_topic                               = lookup(var.sns_topic[count.index], "fifo_topic")
+  kms_master_key_id                        = try(
+      element(aws_kms_key.this.*.id, lookup(var.sns_topic[count.index], "kms_master_key_id"))
+  )
+  name                                     = lookup(var.sns_topic[count.index], "name")
+  name_prefix                              = lookup(var.sns_topic[count.index], "name_prefix")
+  policy                                   = lookup(var.sns_topic[count.index], "policy")
+  signature_version                        = lookup(var.sns_topic[count.index], "signature_version")
+  tags                                     = merge(
+    var.tags,
+    lookup(var.sns_topic[count.index], "tags"),
+    data.aws_default_tags.this.tags
+  )
+  tracing_config                           = lookup(var.sns_topic[count.index], "tracing_config")
 }

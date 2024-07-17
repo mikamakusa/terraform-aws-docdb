@@ -13,6 +13,11 @@ variable "security_group_id" {
   default = null
 }
 
+variable "vpc_id" {
+  type    = string
+  default = null
+}
+
 variable "cluster" {
   type = list(object({
     id                              = number
@@ -26,10 +31,8 @@ variable "cluster" {
     db_subnet_group_name            = optional(string)
     deletion_protection             = optional(bool)
     enabled_cloudwatch_logs_exports = optional(list(string))
-    engine                          = optional(string)
-    engine_version                  = optional(string)
     final_snapshot_identifier       = optional(string)
-    global_cluster_identifier       = optional(string)
+    global_cluster_id               = optional(number)
     kms_key_id                      = optional(string)
     master_password                 = optional(string)
     master_username                 = optional(string)
@@ -56,22 +59,22 @@ variable "cluster" {
 
 variable "cluster_instance" {
   type = list(object({
-    id                              = number
-    cluster_id                      = number
-    instance_class                  = string
-    apply_immediately               = optional(bool)
-    auto_minor_version_upgrade      = optional(bool)
-    availability_zone               = optional(string)
-    ca_cert_identifier              = optional(string)
-    copy_tags_to_snapshot           = optional(bool)
-    enable_performance_insights     = optional(bool)
-    engine                          = optional(string)
-    identifier                      = optional(string)
-    identifier_prefix               = optional(string)
-    performance_insights_kms_key_id = optional(string)
-    preferred_maintenance_window    = optional(string)
-    promotion_tier                  = optional(number)
-    tags                            = optional(map(string))
+    id                           = number
+    cluster_id                   = number
+    instance_class               = string
+    apply_immediately            = optional(bool)
+    auto_minor_version_upgrade   = optional(bool)
+    availability_zone            = optional(string)
+    ca_cert_identifier           = optional(string)
+    copy_tags_to_snapshot        = optional(bool)
+    enable_performance_insights  = optional(bool)
+    identifier                   = optional(string)
+    identifier_prefix            = optional(string)
+    kms_key_id                   = optional(number)
+    preferred_maintenance_window = optional(string)
+    promotion_tier               = optional(number)
+    global_cluster_id            = optional(number)
+    tags                         = optional(map(string))
   }))
   default     = []
   description = <<EOF
@@ -110,12 +113,12 @@ variable "cluster_snapshot" {
 variable "event_subscription" {
   type = list(object({
     id               = number
-    sns_topic_arn    = optional(string)
+    sns_topic_id     = optional(number)
     enabled          = optional(bool)
     event_categories = optional(list(string))
     name             = optional(string)
     name_prefix      = optional(string)
-    source_ids       = optional(list(string))
+    source_ids       = optional(list(number))
     source_type      = optional(string)
     tags             = optional(map(string))
   }))
@@ -126,17 +129,17 @@ variable "event_subscription" {
 
 variable "global_cluster" {
   type = list(object({
-    id                           = number
-    global_cluster_identifier    = optional(string)
-    database_name                = optional(string)
-    deletion_protection          = optional(bool)
-    engine                       = optional(string)
-    engine_version               = optional(string)
-    source_db_cluster_identifier = optional(string)
-    storage_encrypted            = optional(bool)
+    id                        = number
+    global_cluster_identifier = optional(string)
+    database_name             = optional(string)
+    deletion_protection       = optional(bool)
+    engine                    = optional(string)
+    engine_version            = optional(string)
+    source_db_cluster_id      = optional(number)
+    storage_encrypted         = optional(bool)
     global_cluster_members = optional(list(object({
-      db_cluster_arn = optional(string)
-      is_writer      = optional(bool)
+      db_cluster_id = optional(number)
+      is_writer     = optional(bool)
     })), [])
   }))
   default     = []
@@ -168,23 +171,17 @@ variable "sns_topic" {
     delivery_policy                          = optional(string)
     display_name                             = optional(string)
     fifo_topic                               = optional(bool)
-    firehose_failure_feedback_role_arn       = optional(string)
-    firehose_success_feedback_role_arn       = optional(string)
-    firehose_success_feedback_sample_rate    = optional(number)
+    firehose_id                              = optional(number)
     http_failure_feedback_role_arn           = optional(string)
     http_success_feedback_role_arn           = optional(string)
     http_success_feedback_sample_rate        = optional(number)
-    kms_master_key_id                        = optional(string)
-    lambda_failure_feedback_role_arn         = optional(string)
-    lambda_success_feedback_role_arn         = optional(string)
-    lambda_success_feedback_sample_rate      = optional(number)
+    kms_master_key_id                        = optional(number)
+    lambda_id                                = optional(number)
     name                                     = optional(string)
     name_prefix                              = optional(string)
     policy                                   = optional(string)
     signature_version                        = optional(number)
-    sqs_failure_feedback_role_arn            = optional(string)
-    sqs_success_feedback_role_arn            = optional(string)
-    sqs_success_feedback_sample_rate         = optional(number)
+    sqs_id                                   = optional(number)
     tags                                     = optional(map(string))
     tracing_config                           = optional(string)
   }))
